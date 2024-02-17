@@ -148,23 +148,23 @@ class StreamingExample:
             self.FollowMe(target_azimuth, target_elevation)
 
         # TODO: -> use pixel coordinates and video FOV to calculate vertical and horizontal angle away from center of frame
-        def calculateAngles(self, x, y, w, h, frame_width, frame_height):
+    def calculateAngles(self, x, y, w, h, width, height):
         # Calculate the center of the bounding box
-            center_x = x + w / 2
-            center_y = y + h / 2
+        center_x = x + w / 2
+        center_y = y + h / 2
 
-            # Normalize the pixel coordinates to -0.5 to 0.5
-            normalized_x = (center_x / width) - 0.5
-            normalized_y = (center_y / height) - 0.5
+        # Normalize the pixel coordinates to -0.5 to 0.5
+        normalized_x = (center_x / width) - 0.5
+        normalized_y = (center_y / height) - 0.5
 
-            # Calculate the azimuth and elevation angles
-            # Assuming the FOV is the same in both horizontal and vertical directions
-            target_azimuth = normalized_x * HFOV
-            target_elevation = normalized_y * HFOV
+        # Calculate the azimuth and elevation angles
+        # Assuming the FOV is the same in both horizontal and vertical directions
+        target_azimuth = normalized_x * HFOV
+        target_elevation = normalized_y * HFOV
 
-            return target_azimuth, target_elevation
+        return target_azimuth, target_elevation
         
         # TODO: -> plug azimuth and elevation into FollowMe to control the drone
 
-        def FollowMe(self, target_azimuth, target_elevation, change_of_scale=1.0, confidence_index=1.0, is_new_selection=True, timestamp=0):
-            assert olympe.messages.follow_me.target_image_detection(target_azimuth, target_elevation, change_of_scale, confidence_index, is_new_selection, timestamp, _timeout=10, _no_expect=False, _float_tol=(1e-07, 1e-09))
+    def FollowMe(self, target_azimuth, target_elevation, change_of_scale=1.0, confidence_index=1.0, is_new_selection=True, timestamp=0):
+        assert olympe.messages.follow_me.target_image_detection(target_azimuth, target_elevation, change_of_scale, confidence_index, is_new_selection, timestamp, _timeout=10, _no_expect=False, _float_tol=(1e-07, 1e-09))
