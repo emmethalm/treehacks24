@@ -33,7 +33,6 @@ HFOV = 68 # degrees
 
 # HDR 8: for all resolutions
 
-# TODO 
 # video stream -> frame -> convert frame to work with CV2 [done]
 
 # -> detect people in frame -> get bounding boxes with pixel coordinates
@@ -63,6 +62,10 @@ class StreamingExample:
         # Connect to drone
         assert self.drone.connect(retry=3)
 
+        assert self.drone(TakeOff()
+            >> FlyingStateChanged(state="hovering", _timeout=10)
+            ).wait().success()
+
         # if DRONE_RTSP_PORT is not None:
         #     self.drone.streaming.server_addr = f"{DRONE_IP}:{DRONE_RTSP_PORT}"
 
@@ -89,6 +92,10 @@ class StreamingExample:
         if self.renderer is not None:
             self.renderer.stop()
         # Properly stop the video stream and disconnect
+
+        # Land
+        assert self.drone(Landing()).wait().success()
+       
         assert self.drone.streaming.stop()
         assert self.drone.disconnect()
         # self.h264_stats_file.close()
@@ -132,7 +139,7 @@ class StreamingExample:
             # Release the YUV frame
             frame.unref()
 
-        # TODO: -> detect people in frame -> get bounding boxes with pixel coordinates
+        #-> detect people in frame -> get bounding boxes with pixel coordinates
 
         # detect people in the frame
         boxes, weights = hog.detectMultiScale(cv2frame, winStride=(4, 4), padding=(8, 8), scale=1.05)
@@ -147,7 +154,7 @@ class StreamingExample:
             # Control the drone to follow the detected person
             self.FollowMe(target_azimuth, target_elevation)
 
-        # TODO: -> use pixel coordinates and video FOV to calculate vertical and horizontal angle away from center of frame
+    # -> use pixel coordinates and video FOV to calculate vertical and horizontal angle away from center of frame
     def calculateAngles(self, x, y, w, h, width, height):
         # Calculate the center of the bounding box
         center_x = x + w / 2
@@ -164,7 +171,6 @@ class StreamingExample:
 
         return target_azimuth, target_elevation
         
-        # TODO: -> plug azimuth and elevation into FollowMe to control the drone
-
+    # -> plug azimuth and elevation into FollowMe to control the drone
     def FollowMe(self, target_azimuth, target_elevation, change_of_scale=1.0, confidence_index=1.0, is_new_selection=True, timestamp=0):
         assert olympe.messages.follow_me.target_image_detection(target_azimuth, target_elevation, change_of_scale, confidence_index, is_new_selection, timestamp, _timeout=10, _no_expect=False, _float_tol=(1e-07, 1e-09))
