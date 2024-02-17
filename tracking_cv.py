@@ -33,7 +33,9 @@ HFOV = 68 # degrees
 
 # HDR 8: for all resolutions
 
-# video stream -> frame -> convert frame to work with CV2
+# TODO 
+# video stream -> frame -> convert frame to work with CV2 [done]
+
 # -> detect people in frame -> get bounding boxes with pixel coordinates
 # -> use pixel coordinates and video FOV to calculate vertical and horizontal angle away from center of frame
 # -> plug azimuth and elevation into FollowMe to control the drone
@@ -129,3 +131,40 @@ class StreamingExample:
             cv2frame = cv2.cvtColor(frame.as_ndarray(), cv2_cvt_color_flag)
             # Release the YUV frame
             frame.unref()
+
+        # TODO: -> detect people in frame -> get bounding boxes with pixel coordinates
+
+        # detect people in the frame
+        boxes, weights = hog.detectMultiScale(cv2frame, winStride=(4, 4), padding=(8, 8), scale=1.05)
+
+        # Draw bounding boxes around detected people
+        for (x, y, w, h) in boxes:
+            cv2.rectangle(cv2frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+            # Calculate the azimuth and elevation angles
+            target_azimuth, target_elevation = self.calculateAngles(x, y, w, h, width, height)
+
+            # Control the drone to follow the detected person
+            self.FollowMe(target_azimuth, target_elevation)
+
+        # TODO: -> use pixel coordinates and video FOV to calculate vertical and horizontal angle away from center of frame
+        def calculateAngles(self, x, y, w, h, frame_width, frame_height):
+        # Calculate the center of the bounding box
+            center_x = x + w / 2
+            center_y = y + h / 2
+
+            # Normalize the pixel coordinates to -0.5 to 0.5
+            normalized_x = (center_x / width) - 0.5
+            normalized_y = (center_y / height) - 0.5
+
+            # Calculate the azimuth and elevation angles
+            # Assuming the FOV is the same in both horizontal and vertical directions
+            target_azimuth = normalized_x * HFOV
+            target_elevation = normalized_y * HFOV
+
+            return target_azimuth, target_elevation
+        
+        # TODO: -> plug azimuth and elevation into FollowMe to control the drone
+
+        def FollowMe(self, target_azimuth, target_elevation, change_of_scale=1.0, confidence_index=1.0, is_new_selection=True, timestamp=0):
+            assert olympe.messages.follow_me.target_image_detection(target_azimuth, target_elevation, change_of_scale, confidence_index, is_new_selection, timestamp, _timeout=10, _no_expect=False, _float_tol=(1e-07, 1e-09))
