@@ -168,16 +168,32 @@ def takephoto_low():
 @app.route('/spin')
 def spin():
     assert drone(
-        moveBy(0, 0, 0, 6.28)
+        moveBy(0, 0, 0, float(3.14))
         >> FlyingStateChanged(state="hovering", _timeout=10)
-    )
-
-@app.route('/circle')
-def circle(): 
+    ).wait().success()
     assert drone(
-        moveBy(0, 4, 0, 1.57)
+        moveBy(0, 0, 0, float(3.14))
         >> FlyingStateChanged(state="hovering", _timeout=10)
-    )
+    ).wait().success()
+
+@app.route('/box')
+def box():
+        assert drone(
+            moveBy(0, 0, 2, 0)
+            >> FlyingStateChanged(state="hovering", _timeout=10)
+            ).wait().success()
+        assert drone(
+            moveBy(0, 1, 0, 0)
+            >> FlyingStateChanged(state="hovering", _timeout=10)
+            ).wait().success()
+        assert drone(
+            moveBy(0, 0, -2, 0)
+            >> FlyingStateChanged(state="hovering", _timeout=10)
+            ).wait().success()
+        assert drone(
+            moveBy(0, -1, 0, 0)
+            >> FlyingStateChanged(state="hovering", _timeout=10)
+            ).wait().success()
 
 @app.route('/track')
 def track():
