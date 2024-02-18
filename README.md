@@ -1,5 +1,7 @@
 # Jeff: the LLM-powered Drone Personal Assistant
 
+https://youtu.be/oR7R8wydCEQ
+
 ## Inspiration
 
 Drones shouldn't be impersonal, scary, and industrial. We envisioned Jeff as a friendly and creative alternative to most enterprise and defense drone applications. We believe in a future where everyone has a personal assistant and friend on call to make their lives a little easier. So why not use a drone?
