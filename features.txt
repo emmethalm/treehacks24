@@ -1,11 +1,10 @@
-Functions:
+TAB FOR DRONES:
 
-- Proof of concept: take off, fly forward, fly backwards, land [done]
-- Follow person walking around from fixed distance (front OR back)
-- Take a picture [head on, from below, from above]
-- Record video
+- Talk to drone <--> GPT interaction
+- Index all conversations / RAG
+- Follow GEO location
+- Play music (Spotify API)
+- Spot in the gym (CV integration)
+- Take a picture of you
 
-Health angle:
-- use CV to count pushups / squats
-- track your running speed and distance
-- monitor falling
+"Jeff: the friend you needed, didn't deserve, but got anyways."
