@@ -149,7 +149,7 @@ def take_photo_burst():
 @app.route('/takephoto/high')
 def takephoto_high():
     assert drone(
-        moveBy(0, 0, 1.5, 0)
+        moveBy(0, 0, 3, 0)
         >> FlyingStateChanged(state="hovering", _timeout=10)
     ).wait().success()
     take_photo_burst(drone)
@@ -158,7 +158,7 @@ def takephoto_high():
 @app.route('/takephoto/low')
 def takephoto_low():
     assert drone(
-        moveBy(0, 0, 0, 1.2)
+        moveBy(0, 0, -1.2, 0)
         >> FlyingStateChanged(state="hovering", _timeout=10)
     ).wait().success()
     take_photo_burst(drone)
