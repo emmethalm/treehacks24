@@ -168,17 +168,16 @@ def takephoto_low():
 @app.route('/spin')
 def spin():
     assert drone(
-        moveBy(0, 0, 0, 360)
+        moveBy(0, 0, 0, 6.28)
         >> FlyingStateChanged(state="hovering", _timeout=10)
     )
 
 @app.route('/circle')
 def circle(): 
     assert drone(
-        moveBy(0, 2, 0, 90)
+        moveBy(0, 4, 0, 1.57)
         >> FlyingStateChanged(state="hovering", _timeout=10)
     )
-    
 
 @app.route('/track')
 def track():
