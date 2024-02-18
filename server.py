@@ -24,7 +24,7 @@ olympe.log.update_config({
 
 logger = getLogger("photo_example")
 
-DRONE_IP = os.environ.get("DRONE_IP", "192.168.42.1")
+DRONE_IP = os.environ.get("DRONE_IP", "10.202.0.1")
 DRONE_MEDIA_PORT = os.environ.get("DRONE_MEDIA_PORT", "80")
 
 XMP_TAGS_OF_INTEREST = (
