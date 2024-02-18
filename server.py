@@ -51,7 +51,7 @@ assert drone.media(
 def home():
     pass
 
-def setup_photo_burst_mode(drone):
+def setup_photo_burst_mode():
     # For the file_format: jpeg is the only available option
     # dng is not supported in burst mode
     drone(
@@ -72,6 +72,8 @@ def setup_photo_burst_mode(drone):
     ).wait()
 
     return "Welcome to the Drone Server!"
+
+setup_photo_burst_mode()
 
 @app.route('/takeoff')
 def takeoff():
@@ -162,6 +164,21 @@ def takephoto_low():
         >> FlyingStateChanged(state="hovering", _timeout=10)
     ).wait().success()
     take_photo_burst()
+
+@app.route('/spin')
+def spin():
+    assert drone(
+        moveBy(0, 0, 0, 360)
+        >> FlyingStateChanged(state="hovering", _timeout=10)
+    )
+
+@app.route('/circle')
+def circle(): 
+    assert drone(
+        moveBy(0, 2, 0, 90)
+        >> FlyingStateChanged(state="hovering", _timeout=10)
+    )
+    
 
 @app.route('/track')
 def track():
