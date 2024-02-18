@@ -43,6 +43,7 @@ hog = cv2.HOGDescriptor()
 hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
 class FollowingClass:
+
     def __init__(self):
         # Create the olympe.Drone object from its IP address
         self.drone = olympe.Drone(DRONE_IP)
@@ -57,15 +58,21 @@ class FollowingClass:
         self.frame_queue = queue.Queue()
         self.processing_thread = threading.Thread(target=self.yuv_frame_processing)
         self.renderer = None
-        # self.FOCAL_LENGTH = 
-        # self.IMAGE_HEIGHT = 6000 # pixels
-        # self.SENSOR_HEIGHT = 
+        self.FOCAL_LENGTH = 4.29 # mm
+        self.IMAGE_HEIGHT = 1080 # pixels
+        self.REAL_HEIGHT = 1.778 # m
+        self.SENSOR_HEIGHT = 3.92 # mm
+        self.SAFE_DISTANCE = 4 # m
 
     def start(self):
         # Connect to drone
         assert self.drone.connect(retry=3)
 
         assert self.drone(TakeOff()
+            >> FlyingStateChanged(state="hovering", _timeout=10)
+            ).wait().success()
+        
+        assert self.drone(moveBy(0, 0, 1.78, 0)
             >> FlyingStateChanged(state="hovering", _timeout=10)
             ).wait().success()
 
@@ -88,7 +95,7 @@ class FollowingClass:
         self.renderer = PdrawRenderer(pdraw=self.drone.streaming)
         self.running = True
         self.processing_thread.start()
-
+    
     def stop(self):
         self.running = False
         self.processing_thread.join()
@@ -151,10 +158,22 @@ class FollowingClass:
             for (x, y, w, h) in boxes:
                 cv2.rectangle(cv2frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
+                # Calculate dist to person
+                distance = self.calculateDistance(h)
+                
+    
                 # Calculate the azimuth and elevation angles
                 # azimuth left right angle
                 # elevation up down angle
                 target_azimuth, target_elevation = FollowingClass.calculateAngles(x, y, w, h, width, height)
+                self.correctDistance(distance, target_azimuth)
+
+
+
+    def correctDistance(self, distance, target_azimuth):
+        assert self.drone(
+            olympe.messages.move.extended_move_by(d_x=distance - self.SAFE_DISTANCE, d_y=0, d_z=0, d_psi=target_azimuth, max_horizontal_speed=0.5, max_vertical_speed=0.5, max_yaw_rotation_speed=45)
+        ).wait().success()
 
     # -> use pixel coordinates and video FOV to calculate vertical and horizontal angle away from center of frame
     @staticmethod
@@ -175,6 +194,20 @@ class FollowingClass:
 
         return target_azimuth, target_elevation
     
-    @staticmethod
     # calculate distance from detected person to drone
-    def calculateDistance()
+    def calculateDistance(self, h):
+        return (self.FOCAL_LENGTH * self.REAL_HEIGHT * self.IMAGE_HEIGHT) / (h * self.SENSOR_HEIGHT)
+    
+def main():
+    our_drone = FollowingClass()
+    user_input = ""
+    while (user_input.lower() != 'exit'):
+        user_input = input("Enter command (type 'exit' to quit): ")
+        lowered = user_input.lower()
+        if lowered != 'exit':
+            if lowered == 'start':
+                our_drone.start()
+            if lowered == 'stop':
+                our_drone.stop()
+    return
+    
