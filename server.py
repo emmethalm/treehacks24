@@ -77,7 +77,6 @@ def takeoff(drone):
         >> FlyingStateChanged(state="hovering", _timeout=10)
         ).wait().success()
     
-
 @app.route('/landing')
 def takeoff(drone):
         assert drone(Landing()).wait().success()
@@ -143,6 +142,31 @@ def take_photo_burst(drone):
     logger.info(f"{resource_count} media resource downloaded")
     assert resource_count == 10, f"resource count == {resource_count} != 10"
     assert media_download.wait(1.).success(), "Photo burst media download"
+
+@app.route('/takephoto/high')
+def takephoto_high(drone):
+    assert drone(
+        moveBy(0, 0, 1.5, 0)
+        >> FlyingStateChanged(state="hovering", _timeout=10)
+    ).wait().success()
+
+@app.route('/takephoto/low')
+def takephoto_low(drone):
+    assert drone(
+        moveBy(0, 0, 0, -1.2)
+        >> FlyingStateChanged(state="hovering", _timeout=10)
+    ).wait().success()
+
+@app.route('/track')
+def takephoto_low(drone):
+    assert drone(
+        moveBy(3, 0, 0, 0)
+        >> FlyingStateChanged(state="hovering", _timeout=10)
+    ).wait().success()
+    assert drone(
+        moveBy(-3, 0, 0, 0)
+        >> FlyingStateChanged(state="hovering", _timeout=10)
+    ).wait().success()
 
 
 @app.route('/takevideo')
