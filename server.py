@@ -2,7 +2,7 @@ from flask import Flask
 import olympe
 import os
 from olympe.messages.ardrone3.Piloting import TakeOff, moveBy, Landing
-from olympe.messages.ardrone3.PilotingState import FlyingStateChanged
+from olympe.messages.ardrone3.PilotingState import FlyingStateChanged, AttitudeChanged, AltitudeAboveGroundChanged
 from olympe.messages.camera2 import Command, Config, Event
 from olympe.media import download_media, indexing_state, media_created
 from logging import getLogger
@@ -149,13 +149,16 @@ def takephoto_high(drone):
         moveBy(0, 0, 1.5, 0)
         >> FlyingStateChanged(state="hovering", _timeout=10)
     ).wait().success()
+    take_photo_burst(drone)
+    
 
 @app.route('/takephoto/low')
 def takephoto_low(drone):
     assert drone(
-        moveBy(0, 0, 0, -1.2)
+        moveBy(0, 0, 0, 1.2)
         >> FlyingStateChanged(state="hovering", _timeout=10)
     ).wait().success()
+    take_photo_burst(drone)
 
 @app.route('/track')
 def takephoto_low(drone):
@@ -167,14 +170,6 @@ def takephoto_low(drone):
         moveBy(-3, 0, 0, 0)
         >> FlyingStateChanged(state="hovering", _timeout=10)
     ).wait().success()
-
-
-@app.route('/takevideo')
-
-# Play locally stored song via the drone speakers
-@app.route('/playmusic')
-def playmusic(drone):
-     assert drone(()).wait().success()
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
