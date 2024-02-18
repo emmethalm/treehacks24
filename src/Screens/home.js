@@ -6,8 +6,10 @@ import {
   Image,
   Dimensions,
   Button,
+  Animated,
 } from "react-native";
 import Emmet from "./emmet.jpeg";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   useFonts,
   Montserrat_100Thin,
@@ -29,7 +31,7 @@ import {
   Montserrat_800ExtraBold_Italic,
   Montserrat_900Black_Italic,
 } from "@expo-google-fonts/montserrat";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Audio } from "expo-av";
 
 const { width, height } = Dimensions.get("window");
@@ -37,6 +39,8 @@ const { width, height } = Dimensions.get("window");
 const Home = ({ navigation }) => {
   const [recording, setRecording] = useState();
   const [permissionResponse, requestPermission] = Audio.usePermissions();
+  const animation = useRef(new Animated.Value(1)).current;
+
   async function startRecording() {
     try {
       if (permissionResponse.status !== "granted") {
@@ -97,13 +101,39 @@ const Home = ({ navigation }) => {
           }}
         >
           {"  "}
-          Emmet 👋
+          Careers 👋
         </Text>
       </View>
-      <Button
-        title={recording ? "Stop Recording" : "Start Recording"}
-        onPress={recording ? stopRecording : startRecording}
-      />
+      <View
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: height * 0.2,
+        }}
+      >
+        <View
+          style={{
+            borderColor: "white",
+            borderWidth: 2,
+            borderRadius: 10000,
+            padding: height * 0.1,
+          }}
+        >
+          <TouchableOpacity
+            onPress={recording ? stopRecording : startRecording}
+          >
+            <TouchableOpacity
+              onPress={recording ? stopRecording : startRecording}
+            >
+              <MaterialCommunityIcons
+                name="microphone"
+                size={100}
+                color={recording ? "red" : "white"}
+              />
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
+      </View>
       <Text style={styles.landingText}>Home</Text>
       <TouchableOpacity onPress={() => navigation.push("Chat")}>
         <Text style={styles.landingSubtext}>Go to Chat</Text>
