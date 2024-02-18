@@ -3,7 +3,7 @@ import os
 from olympe.messages.ardrone3.Piloting import TakeOff, moveBy, Landing
 from olympe.messages.ardrone3.PilotingState import FlyingStateChanged
 
-DRONE_IP = os.environ.get("DRONE_IP", "192.168.42.1")
+DRONE_IP = os.environ.get("DRONE_IP", "10.202.0.1")
 
 def test():
     drone = olympe.Drone(DRONE_IP)

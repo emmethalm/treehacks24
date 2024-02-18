@@ -39,14 +39,17 @@ XMP_TAGS_OF_INTEREST = (
     "GPSAltitude",
 )
 
+
+drone = olympe.Drone(DRONE_IP)
+drone.connect()
+
+assert drone.media(
+    indexing_state(state="indexed")
+).wait(_timeout=60).success()
+
 @app.route('/')
 def home():
-    drone = olympe.Drone(DRONE_IP)
-    drone.connect()
-
-    assert drone.media(
-        indexing_state(state="indexed")
-    ).wait(_timeout=60).success()
+    pass
 
 def setup_photo_burst_mode(drone):
     # For the file_format: jpeg is the only available option
@@ -71,20 +74,20 @@ def setup_photo_burst_mode(drone):
     return "Welcome to the Drone Server!"
 
 @app.route('/takeoff')
-def takeoff(drone):
+def takeoff():
     assert drone(
         TakeOff()
         >> FlyingStateChanged(state="hovering", _timeout=10)
         ).wait().success()
     
 @app.route('/landing')
-def takeoff(drone):
+def landing():
         assert drone(Landing()).wait().success()
         drone.disconnect()
         return "The eagle has landed."
 
 @app.route('/takephoto')
-def take_photo_burst(drone):
+def take_photo_burst():
     media_state = drone(media_created(_timeout=3.0))
     photo_capture = drone(
         Event.Photo(
@@ -144,7 +147,7 @@ def take_photo_burst(drone):
     assert media_download.wait(1.).success(), "Photo burst media download"
 
 @app.route('/takephoto/high')
-def takephoto_high(drone):
+def takephoto_high():
     assert drone(
         moveBy(0, 0, 1.5, 0)
         >> FlyingStateChanged(state="hovering", _timeout=10)
@@ -153,7 +156,7 @@ def takephoto_high(drone):
     
 
 @app.route('/takephoto/low')
-def takephoto_low(drone):
+def takephoto_low():
     assert drone(
         moveBy(0, 0, 0, 1.2)
         >> FlyingStateChanged(state="hovering", _timeout=10)
@@ -161,7 +164,7 @@ def takephoto_low(drone):
     take_photo_burst(drone)
 
 @app.route('/track')
-def takephoto_low(drone):
+def track():
     assert drone(
         moveBy(3, 0, 0, 0)
         >> FlyingStateChanged(state="hovering", _timeout=10)
